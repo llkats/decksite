@@ -37,14 +37,6 @@ module.exports = function containerPlugin (md, name, options) {
     var start = state.bMarks[startLine] + state.tShift[startLine] // the current first character of a line
     var max = state.eMarks[startLine] // the index of the last character of a line
 
-// console.log(startLine, markerChar, state.src.charCodeAt(start))
-// console.log('start: ' + start)
-// console.log('max: ' + max)
-// console.log(markerChar, 'markerchar')
-// console.log(state.src.charCodeAt(start) + ' equals markerchar', markerChar === state.src.charCodeAt(start))
-// console.log(state)
-// console.log(state.src)
-
     // if this is the first iteration and the marker is not found, this is the first slide
     if (markerChar !== state.src.charCodeAt(start)) {
       // if markerChar is not at the beginning of the line, skip to the next line
@@ -55,23 +47,17 @@ module.exports = function containerPlugin (md, name, options) {
       }
     }
 
-// console.log(isTop, 'istop')
-
     if (isTop) {
       position = start
-// console.log(position, 'position')
     } else {
       for (position = start + 1; position <= max; position++) {
-// console.log(position, 'position', state.src[position])
-// console.log(markerStr[(position - start) % markerLen])
-// console.log(markerStr[(position - start) % markerLen] !== state.src[position], markerStr[(position - start) % markerLen], state.src[position])
         if (markerStr[(position - start) % markerLen] !== state.src[position]) {
           break
         }
       }
 
       markerCount = Math.floor((position - start) / markerLen)
-// console.log(markerCount)
+
       if (markerCount < minMarkers) {
         return false
       }
@@ -82,10 +68,7 @@ module.exports = function containerPlugin (md, name, options) {
     // Check out the rest of the marker string
     markers.push(position)
 
-// console.log(markers)
-
     markup = state.src.slice(startLine, position - 5)
-// console.log(markup)
 
     // Since start is found, we can report success here in validation mode
     if (silent) {
@@ -97,9 +80,7 @@ module.exports = function containerPlugin (md, name, options) {
 
     for (;;) {
       nextLine++
-// console.log(nextLine)
       if (nextLine >= endLine) {
-// console.log(nextLine >= endLine, 'nextline more than endline, all done')
         // unclosed block should be autoclosed by end of document.
         // also block seems to be autoclosed by end of parent
         if (isTop) {
@@ -109,13 +90,8 @@ module.exports = function containerPlugin (md, name, options) {
         break
       }
 
-// console.log(isTop, 'isTop')
-
       start = state.bMarks[nextLine] + state.tShift[nextLine]
       max = state.eMarks[nextLine]
-
-// console.log(start, max)
-// console.log(start < max && state.sCount[nextLine] < state.blkIndent)
 
       if (start < max && state.sCount[nextLine] < state.blkIndent) {
         // non-empty line with negative indent should stop the list:
@@ -134,7 +110,6 @@ module.exports = function containerPlugin (md, name, options) {
       }
 
       for (position = start + 1; position <= max; position++) {
-// console.log('looking for closing fence', markerStr[(position - start) % markerLen] !== state.src[position])
         if (markerStr[(position - start) % markerLen] !== state.src[position]) {
           break
         }
@@ -148,8 +123,6 @@ module.exports = function containerPlugin (md, name, options) {
       // make sure tail has spaces only
       position -= (position - start) % markerLen
       position = state.skipSpaces(position)
-
-// console.log(position)
 
       if (position < max) {
         continue
@@ -178,13 +151,10 @@ module.exports = function containerPlugin (md, name, options) {
     token = state.push('container_slide_close', 'article', -1)
     token.markup = state.src.slice(start, position)
     token.block = true
-// console.log(token)
 
     state.parentType = oldParent
     state.lineMax = oldLineMax
     state.line = nextLine + (autoClosed ? 1 : 0)
-
-    console.log(state.lineMax)
 
     return true
   }
