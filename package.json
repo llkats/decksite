@@ -1,0 +1,16 @@
+{
+  "name": "deckset-to-website",
+  "version": "1.0.0",
+  "description": "convert a deckset markdown file into a lovely responsive website",
+  "main": "lib/decksite/index.js",
+  "scripts": {
+    "test": "node test/basic.js"
+  },
+  "author": "Lydia Kats",
+  "license": "ISC",
+  "dependencies": {
+    "markdown-it": "^6.0.5",
+    "standard": "^7.1.2",
+    "tap": "^5.7.2"
+  }
+}
