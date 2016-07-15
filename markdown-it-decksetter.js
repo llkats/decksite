@@ -38,13 +38,11 @@ module.exports = function containerPlugin (md, name, options) {
     var max = state.eMarks[startLine] // the index of the last character of a line
 
     // if this is the first iteration and the marker is not found, this is the first slide
-    if (markerChar !== state.src.charCodeAt(start)) {
+    if (start === 0) {
+      isTop = true
+    } else if (markerChar !== state.src.charCodeAt(start)) {
       // if markerChar is not at the beginning of the line, skip to the next line
-      if (start === 0) {
-        isTop = true
-      } else {
-        return false
-      }
+      return false
     }
 
     if (isTop) {
@@ -109,11 +107,11 @@ module.exports = function containerPlugin (md, name, options) {
         continue
       }
 
-      for (position = start + 1; position <= max; position++) {
+      /*for (position = start + 1; position <= max; position++) {
         if (markerStr[(position - start) % markerLen] !== state.src[position]) {
           break
         }
-      }
+      }*/
 
       // closing code fence must be at least as long as the opening one
       if (Math.floor((position - start) / markerLen) < markerCount) {
