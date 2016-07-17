@@ -69,9 +69,9 @@ module.exports = function containerPlugin (md, name, options) {
     }
 
     // get all of the markup from the start to the next marker
-    markup = state.src.slice(startLine, position - 5)
+    markup = state.src.slice(startLine, position - 1)
 
-    console.log(markup)
+    // console.log(markup)
 
     // Since start is found, we can report success here in validation mode
     if (silent) {
@@ -79,53 +79,22 @@ module.exports = function containerPlugin (md, name, options) {
     }
 
     // Search for the end of the block
-    nextLine = startLine
+    // nextLine = startLine
+    nextLine = position + 1
 
+    // i think this is processing each character in a line
+    // but at this point, we should have all we need - the start and the end
+    // so maybe it's just necessary to set the vars after the for loop correctly
     for (;;) {
       nextLine++
-      if (nextLine >= endLine) {
-        // unclosed block should be autoclosed by end of document.
-        // also block seems to be autoclosed by end of parent
-        if (isTop) {
-          // there's only one slide with no closing fence, enclose the one block
-          autoClosed = true
-        }
-        break
-      }
 
       start = state.bMarks[nextLine] + state.tShift[nextLine]
       max = state.eMarks[nextLine]
-
-      if (start < max && state.sCount[nextLine] < state.blkIndent) {
-        // non-empty line with negative indent should stop the list:
-        // - ```
-        //  test
-        break
-      }
-
-      if (markerChar !== state.src.charCodeAt(start)) {
-        continue
-      }
-
-      if (state.sCount[nextLine] - state.blkIndent >= 4) {
-        // closing fence should be indented less than 4 spaces
-        continue
-      }
-
-      /*for (position = start + 1; position <= max; position++) {
-        if (markerStr[(position - start) % markerLen] !== state.src[position]) {
-          break
-        }
-      }*/
 
       // closing code fence must be at least as long as the opening one
       if (Math.floor((position - start) / markerLen) < markerCount) {
         continue
       }
-
-      // make sure tail has spaces only
-      position -= (position - start) % markerLen
-      position = state.skipSpaces(position)
 
       if (position < max) {
         continue
