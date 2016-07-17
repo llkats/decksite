@@ -69,27 +69,26 @@ module.exports = function containerPlugin (md, name, options) {
     }
 
     // get all of the markup from the start to the next marker
-    markup = state.src.slice(startLine, position - 1)
+    markup = state.src.slice(startLine, position)
 
-    // console.log(markup)
-
-    // Since start is found, we can report success here in validation mode
-    if (silent) {
-      return true
-    }
+    console.log(startLine, position, markup)
 
     // Search for the end of the block
     // nextLine = startLine
     nextLine = position + 1
 
-    // i think this is processing each character in a line
-    // but at this point, we should have all we need - the start and the end
-    // so maybe it's just necessary to set the vars after the for loop correctly
     for (;;) {
       nextLine++
 
       start = state.bMarks[nextLine] + state.tShift[nextLine]
       max = state.eMarks[nextLine]
+
+      // search for the next marker
+      for (position = start + 1; position <= max; position++) {
+        if (markerStr[(position - start) % markerLen] !== state.src[position]) {
+          break
+        }
+      }
 
       // closing code fence must be at least as long as the opening one
       if (Math.floor((position - start) / markerLen) < markerCount) {
