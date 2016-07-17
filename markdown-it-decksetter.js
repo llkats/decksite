@@ -21,7 +21,6 @@ module.exports = function containerPlugin (md, name, options) {
   var markerChar = markerStr.charCodeAt(0)
   var markerLen = markerStr.length
   var render = options.render || renderDefault
-  var markers = []
   var isTop = false
 
   // called over every line, while state accumulates the changes i guess
@@ -41,7 +40,8 @@ module.exports = function containerPlugin (md, name, options) {
     if (start === 0) {
       isTop = true
     } else if (markerChar !== state.src.charCodeAt(start)) {
-      // if markerChar is not at the beginning of the line, skip to the next line
+      // otherwise if markerChar is not at the beginning of the line, skip to the next line
+      // processes the first slide without an opening marker
       return false
     }
 
@@ -62,9 +62,6 @@ module.exports = function containerPlugin (md, name, options) {
 
       position -= (position - start) % markerLen // the line beginnings where the markers occur
     }
-
-    // Check out the rest of the marker string
-    markers.push(position)
 
     markup = state.src.slice(startLine, position - 5)
 
