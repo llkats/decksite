@@ -45,25 +45,33 @@ module.exports = function containerPlugin (md, name, options) {
       return false
     }
 
+    // if first slide, start the position at the very top
     if (isTop) {
       position = start
     } else {
+      // otherwise, look for the marker to start the container
       for (position = start + 1; position <= max; position++) {
         if (markerStr[(position - start) % markerLen] !== state.src[position]) {
           break
         }
       }
 
+      // if a marker is found, find its length
       markerCount = Math.floor((position - start) / markerLen)
 
+      // a marker has to be the right length (`---` not just `-`)
       if (markerCount < minMarkers) {
         return false
       }
 
-      position -= (position - start) % markerLen // the line beginnings where the markers occur
+      // the line beginnings where the markers occur
+      position -= (position - start) % markerLen
     }
 
+    // get all of the markup from the start to the next marker
     markup = state.src.slice(startLine, position - 5)
+
+    console.log(markup)
 
     // Since start is found, we can report success here in validation mode
     if (silent) {
